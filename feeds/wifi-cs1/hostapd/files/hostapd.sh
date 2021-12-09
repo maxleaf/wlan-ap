@@ -378,6 +378,7 @@ hostapd_common_add_bss_config() {
 
 	config_add_int eap_server
 	config_add_string eap_user_file ca_cert server_cert private_key private_key_passwd server_id
+       config_add_string vlanbr
 }
 
 hostapd_set_vlan_file() {
@@ -788,7 +789,15 @@ hostapd_set_bss_options() {
 	}
 
 	append bss_conf "ssid=$ssid" "$N"
-	[ -n "$network_bridge" ] && append bss_conf "bridge=$network_bridge" "$N"
+	json_get_vars vlanbr
+	set_default vlanbr $network_bridge
+	if [ -n $vlanbr ]; then
+		[ -n "$network_bridge" ] && append bss_conf "bridge=$vlanbr" "$N"
+	else
+		[ -n "$network_bridge" ] && append bss_conf "bridge=$network_bridge" "$N"
+
+	fi
+
 	[ -n "$network_ifname" ] && append bss_conf "snoop_iface=$network_ifname" "$N"
 	[ -n "$iapp_interface" ] && {
 		local ifname

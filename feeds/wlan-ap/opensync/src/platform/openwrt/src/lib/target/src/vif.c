@@ -138,6 +138,7 @@ enum {
 	WIF_ATTR_PROXY_ARP,
 	WIF_ATTR_MCAST_TO_UCAST,
 	WIF_ATTR_AUTH_CACHE,
+	WIF_ATTR_VLANBR,
 	__WIF_ATTR_MAX,
 };
 
@@ -236,6 +237,7 @@ static const struct blobmsg_policy wifi_iface_policy[__WIF_ATTR_MAX] = {
 	[WIF_ATTR_PROXY_ARP] = { .name = "proxy_arp", BLOBMSG_TYPE_BOOL },
 	[WIF_ATTR_MCAST_TO_UCAST] = { .name = "multicast_to_unicast", BLOBMSG_TYPE_BOOL },
 	[WIF_ATTR_AUTH_CACHE] = { .name = "auth_cache", BLOBMSG_TYPE_BOOL },
+	[WIF_ATTR_VLANBR]  = { .name = "vlanbr", .type = BLOBMSG_TYPE_STRING },
 };
 
 const struct uci_blob_param_list wifi_iface_param = {
@@ -1603,10 +1605,16 @@ static int ap_vif_config_set(const struct schema_Wifi_Radio_Config *rconf,
 		blobmsg_add_string(&b, "network", vconf->bridge);
 
 	if (changed->vlan_id && strncmp(vconf->bridge, "gre", strlen("gre"))) {
+		char vbr[12];
 		blobmsg_add_u32(&b, "vlan_id", vconf->vlan_id);
 		if (vconf->vlan_id > 2)
 			vid = vconf->vlan_id;
 		blobmsg_add_u32(&b, "vid", vid);
+
+		if (vconf->vlan_id > 2) {
+			snprintf(vbr, sizeof(vbr), "br-vlan%d", vid);
+			blobmsg_add_string(&b, "vlanbr", vbr);
+		}
 	}
 
 	if (changed->mac_list_type || changed->mac_list) {

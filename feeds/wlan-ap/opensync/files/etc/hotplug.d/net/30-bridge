@@ -20,9 +20,16 @@ net=$(uci get wireless.${DEVICENAME}.network)
 vid=$(uci get wireless.${DEVICENAME}.vid)
 
 [ -z "$net" -o -z "$vid" -o "$vid" = 0 ] && exit 0
+#old_br=`cat /etc/$DEVICENAME_vlanbr`
+#brctl delif br-wan $DEVICENAME
+#brctl delif br-lan $DEVICENAME
+#brctl delif $old_br $DEVICENAME
 
-bridge vlan add vid $vid dev br-lan self
-bridge vlan add vid $vid dev br-wan self
-bridge vlan add vid $vid dev $ifname
-bridge vlan add pvid $vid vid $vid dev ${DEVICENAME} untagged
+#brctl addif $net $DEVICENAME
+#echo $net > /etc/$DEVICENAME_vlanbr
+#bridge vlan add vid $vid dev br-lan self
+#bridge vlan add vid $vid dev br-wan self
+#bridge vlan add vid $vid dev $ifname
+#bridge vlan add pvid $vid vid $vid dev ${DEVICENAME} untagged
+
 exit 0

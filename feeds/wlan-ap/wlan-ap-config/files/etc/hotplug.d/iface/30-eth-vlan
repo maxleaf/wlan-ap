@@ -27,7 +27,7 @@ if [ "$ACTION" = ifup -o "$ACTION" = ifupdate ]; then
 			for vid in $stale_allowed_vlans
 			do
 				echo "stale: $vid" >> /root/hello
-				brctl delif vlan-$vid $net.$vid
+				brctl delif br-vlan$vid $net.$vid
 				ip link set dev $net.$vid down
 		                ip link del link $net name $net.$vid
 				bridge vlan del vid $vid dev $net
@@ -44,10 +44,10 @@ if [ "$ACTION" = ifup -o "$ACTION" = ifupdate ]; then
 		                ip link add link $net name $net.$vid type vlan id $vid
 		                ip link set dev $net.$vid up
 
-				brctl addbr vlan-$vid
-				brctl addif vlan-$vid $ifname.$vid
-				brctl addif vlan-$vid $net.$vid
-				ifconfig vlan-$vid up
+				brctl addbr br-vlan$vid
+				brctl addif br-vlan$vid $ifname.$vid
+				brctl addif br-vlan$vid $net.$vid
+				ifconfig br-vlan$vid up
 
 				bridge vlan add vid $vid dev br-lan self
 				bridge vlan add vid $vid dev br-wan self
@@ -61,20 +61,23 @@ if [ "$ACTION" = ifup -o "$ACTION" = ifupdate ]; then
 	else
 		vid=$(uci get network.${INTERFACE}.vid)
 		net=$(uci get network.${INTERFACE}.ifname)
-
+		echo vid:$vid net:$net ifname:$ifname >> /root/eth_vlan
 		[ -z "$net" -o -z "$vid" -o "$vid" = 0 ] && exit 0
 		$oldvid=`cat /etc/vid_$INTERFACE`
 		echo $vid > /etc/vid_$INTERFACE
 
 		ip link add link $ifname name $ifname.$vid type vlan id $vid
 		ip link set dev $ifname.$vid up
-		brctl addbr vlan-$vid
-		brctl addif vlan-$vid $ifname.$vid
+		brctl addbr br-vlan$vid
+		brctl addif br-vlan$vid $ifname.$vid
 		brctl delif br-wan $net
 		brctl delif br-lan $net
-		brctl delif vlan-$oldvid $net
-		brctl addif vlan-$vid $net
-		ifconfig vlan-$vid up
+		brctl delif br-vlan$oldvid $net
+		if [ "$net" != "br-wan.$vid" ] && [ "$net" != "br-lan.$vid" ]; then
+			brctl addif br-vlan$vid $net
+		fi
+
+		ifconfig br-vlan$vid up
 
 		bridge vlan add vid $vid dev br-lan self
 		bridge vlan add vid $vid dev br-wan self
@@ -93,7 +96,7 @@ else
 			for vid in $allowed_vlans
 			do
 				bridge vlan del vid $vid dev $net
-				brctl delif vlan-$vid $net.$vid
+				brctl delif br-vlan$vid $net.$vid
 				ip link set dev $net.$vid down
 				ip link del link $net name $net.$vid
 			done
@@ -107,7 +110,12 @@ else
 			bridge vlan del pvid $vid vid $vid dev $net untagged
 
 			bridge vlan add pvid 1 vid 1 dev $net untagged
-			brctl delif vlan-$vid $net
+			brctl delif br-vlan$vid $net
+
+			wan=`uci get network.wan.ifname | grep -m1 $net`
+			[ -n "$wan" ] && brctl addif br-wan $net
+			lan=`uci get network.lan.ifname | grep -m1 $net`
+			[ -n "$lan" ] && brctl addif br-lan $net
 		fi
 		exit 0
 	fi

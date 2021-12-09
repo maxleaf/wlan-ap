@@ -315,6 +315,7 @@ hostapd_common_add_bss_config() {
 	config_add_array radius_acct_req_attr
 
 	config_add_boolean multicast_to_unicast proxy_arp
+	config_add_string vlanbr
 }
 
 hostapd_set_vlan_file() {
@@ -699,7 +700,14 @@ hostapd_set_bss_options() {
 	}
 
 	append bss_conf "ssid=$ssid" "$N"
-	[ -n "$network_bridge" ] && append bss_conf "bridge=$network_bridge" "$N"
+	json_get_vars vlanbr
+	set_default vlanbr $network_bridge
+	if [ -n $vlanbr ]; then
+		[ -n "$network_bridge" ] && append bss_conf "bridge=$vlanbr" "$N"
+	else
+		[ -n "$network_bridge" ] && append bss_conf "bridge=$network_bridge" "$N"
+
+	fi
 	[ -n "$iapp_interface" ] && {
 		local ifname
 		network_get_device ifname "$iapp_interface" || ifname="$iapp_interface"
