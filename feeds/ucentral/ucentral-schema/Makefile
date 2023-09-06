@@ -3,10 +3,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=ucentral-schema
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL=https://github.com/blogic/ucentral-schema.git
+PKG_SOURCE_URL=https://github.com/Telecominfraproject/wlan-ucentral-schema.git
+PKG_MIRROR_HASH:=6da4c8a82c5393d54bfe1a91479730cc126e7de1cf1565a0274d600759e668e0
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2021-02-15
-PKG_SOURCE_VERSION:=224042e57012b72231c5d402816a83fab5bbf54f
+PKG_SOURCE_DATE:=2022-05-29
+PKG_SOURCE_VERSION:=708b1de986b63c35e4f5e79a3183ffb4a36f40a1
 
 PKG_MAINTAINER:=John Crispin <john@phrozen.org>
 PKG_LICENSE:=BSD-3-Clause
@@ -17,6 +18,7 @@ define Package/ucentral-schema
   SECTION:=ucentral
   CATEGORY:=uCentral
   TITLE:=OpenWrt uCentral schema
+  DEPENDS+= +ucode-mod-nl80211 +ucode-mod-rtnl
 endef
 
 define Package/ucentral-recovery

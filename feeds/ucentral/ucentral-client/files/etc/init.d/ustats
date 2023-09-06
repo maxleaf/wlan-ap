@@ -20,9 +20,4 @@ start_service() {
 		procd_set_param respawn 1 $interval 0
 		procd_close_instance
 	}
-
-        config_get interval 'health' 'interval' 0
-	[ "$interval" -eq 0 ] || {
-		ubus call ucentral config '{"health": '$interval' }'
-	}
 }

@@ -19,9 +19,9 @@ start_service() {
 	
 	[ -f /tmp/ucentral.version ] || cat /etc/openwrt_release | grep DISTRIB_REVISION= | cut -d\' -f2 > /tmp/ucentral.version
 
-	mkdir /tmp/ucentral/
+	mkdir -p /tmp/ucentral/
 
-	ucode -m fs -i /usr/share/ucentral/crashlog.uc
+	ucode -l fs /usr/share/ucentral/pstore.uc
 	
 	. /lib/functions.sh
 	cp /etc/config-shadow/ucentral /etc/config/
@@ -32,8 +32,13 @@ start_service() {
 	config_get debug 'config' 'debug' 0
 	config_get insecure 'config' 'insecure' 0
 
-	interval=$(uci get ustats.health.interval)
+	if [ -f /etc/ucentral/restrictions.json ]; then
+		selfsigned=$(cat /etc/ucentral/restrictions.json | jsonfilter -e '@["allow-self-signed"]')
+		[ "${selfsigned}" == "true" ] && insecure=1
+	fi
 
+	boot_cause=$(cat /tmp/pstore | jsonfilter -e '@["pstore"][-1]'.boot_cause)
+	[ -z $boot_cause ] && boot_cause=coldboot
 	procd_open_instance
 	procd_set_param command "$PROG"
 	[ -n "$serial" ] && procd_append_param command -S $serial
@@ -41,8 +46,8 @@ start_service() {
 	[ -n "$port" ] && procd_append_param command -P $port
 	[ "$debug" -eq 0 ] || procd_append_param command -d
 	[ "$insecure" -eq 0 ] || procd_append_param command -i
-	[ -z "$interval" ] || procd_append_param command -H $interval
 	[ -z "$(mount | grep 'tmpfs on / type tmpfs')" ] || procd_append_param command -r
+	procd_append_param command -c "$boot_cause"
 	procd_append_param command -f "$(cat /tmp/ucentral.version)"
 	procd_set_param respawn 3600 5 0
 	procd_close_instance

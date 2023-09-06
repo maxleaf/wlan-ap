@@ -1,5 +1,4 @@
 #!/usr/bin/ucode
-{%
 let fs = require("fs");
 let ubus = require("ubus");
 let conn = ubus.connect();
@@ -56,7 +55,7 @@ function state_get() {
 function state_set(state) {
 	let file = fs.open("/tmp/uchannel.json", "w");
 
-	state.uptime = uptime;
+	state.executed = uptime;
 	file.write(state);
 	file.close();
 
@@ -64,7 +63,7 @@ function state_set(state) {
 		node: "*",
 		data: {
 			status: state.status,
-			uptime: state.uptime,
+			uptime: state.executed,
 		}
 	});
 	printf("entering %s state\n", state.status);
@@ -259,8 +258,8 @@ function channel_balance(band, mask) {
 
 function youngest() {
 	for (let ip, host in hosts) {
-		if (host.host_info.status == "overlap" &&
-		    host.host_info.uptime < uptime) {
+		if (host.host_info?.status == "overlap" &&
+		    host.host_info?.uptime < uptime) {
 			print("Found a younger host\n");
 			return 1;
 		}
@@ -272,7 +271,7 @@ function youngest() {
 let state = state_get();
 
 if (state.status == "waiting" &&
-    (uptime - state.uptime < (12 * 60 * 60))) {
+    (uptime - state.changed < (12 * 60 * 60))) {
 	state_set(state);
 	return;
 }
@@ -328,4 +327,3 @@ for (let freq, obj in overlap) {
 state.status = "waiting";
 state.changed = uptime;
 state_set(state);
-%}

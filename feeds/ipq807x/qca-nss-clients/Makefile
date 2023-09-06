@@ -5,7 +5,8 @@ PKG_NAME:=qca-nss-clients
 PKG_SOURCE_PROTO:=git
 PKG_BRANCH:=master
 PKG_RELEASE:=2
-PKG_SOURCE_URL:=https://source.codeaurora.org/quic/qsdk/oss/lklm/nss-clients/
+PKG_SOURCE_URL:=https://git.codelinaro.org/clo/qsdk/oss/lklm/nss-clients
+PKG_MIRROR_HASH:=802bf8b2dac8da0549e108b873afd982d127370c07d6574ece71f902eafe7698
 PKG_VERSION:=153998d70fdba508a59a28c13a606032cbf32686
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -216,7 +217,7 @@ define KernelPackage/qca-nss-drv-bridge-mgr
   CATEGORY:=Kernel modules
   SUBMENU:=Network Devices
   TITLE:=Kernel driver for NSS bridge manager
-  DEPENDS:=@TARGET_ipq_ipq807x||TARGET_ipq_ipq807x_ipq807x||TARGET_ipq807x||TARGET_ipq807x_ipq807x||TARGET_ipq_ipq60xx||TARGET_ipq807x_ipq60xx \
+  DEPENDS:=@TARGET_ipq807x_ipq807x||TARGET_ipq807x_ipq60xx \
 		+TARGET_ipq_ipq807x:kmod-qca-nss-drv-vlan-mgr \
 		+TARGET_ipq_ipq807x_ipq807x:kmod-qca-nss-drv-vlan-mgr \
 		+TARGET_ipq807x:kmod-qca-nss-drv-vlan-mgr \
@@ -237,7 +238,7 @@ define KernelPackage/qca-nss-drv-vlan-mgr
   CATEGORY:=Kernel modules
   SUBMENU:=Network Devices
   TITLE:=Kernel driver for NSS vlan manager
-  DEPENDS:=@TARGET_ipq_ipq807x||TARGET_ipq_ipq807x_ipq807x||TARGET_ipq807x||TARGET_ipq807x_ipq807x||TARGET_ipq_ipq60xx||TARGET_ipq807x_ipq60xx +kmod-qca-nss-drv @!LINUX_3_18 \
+  DEPENDS:=@TARGET_ipq807x_ipq807x||TARGET_ipq807x_ipq60xx +kmod-qca-nss-drv @!LINUX_3_18 \
 		+!(TARGET_ipq_ipq807x_QSDK_256||TARGET_ipq_ipq60xx_QSDK_256):kmod-bonding
   FILES:=$(PKG_BUILD_DIR)/vlan/qca-nss-vlan.ko
   AUTOLOAD:=$(call AutoLoad,51,qca-nss-vlan)

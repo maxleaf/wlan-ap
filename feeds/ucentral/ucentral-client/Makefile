@@ -3,10 +3,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=ucentral-client
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL=https://github.com/blogic/ucentral-client.git
+PKG_SOURCE_URL=https://github.com/Telecominfraproject/wlan-ucentral-client.git
+PKG_MIRROR_HASH:=208bc53ea0194a59ff4dc78c32033a393017b0b883aa4d7741595b61ad3a4fd3
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2021-02-15
-PKG_SOURCE_VERSION:=06704453bec36baf96919021507627b1f1d4e6e4
+PKG_SOURCE_DATE:=2022-06-22
+PKG_SOURCE_VERSION:=d898a7afb595d6c2350d38d027bf142e72060662
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_MAINTAINER:=John Crispin <john@phrozen.org>
@@ -18,13 +19,8 @@ define Package/ucentral-client
   SECTION:=ucentral
   CATEGORY:=uCentral
   TITLE:=OpenWrt uCentral websocket client
-  DEPENDS:=+ucode +ucode-mod-fs +ucode-mod-ubus +ucode-mod-uci +ucode-mod-math \
+  DEPENDS:=+ucode +ucode-mod-fs +ucode-mod-ubus +ucode-mod-uci +ucode-mod-math +ucode-mod-resolv +ucode-mod-uloop \
 	   +libubox +libwebsockets-openssl +libblobmsg-json +libubus
-endef
-
-define Package/ucentral-client/conffiles
-/etc/ucentral/
-/etc/config-shadow/
 endef
 
 define Package/ucentral-client/install
