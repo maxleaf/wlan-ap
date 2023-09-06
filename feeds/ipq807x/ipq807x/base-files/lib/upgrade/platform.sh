@@ -151,6 +151,7 @@ platform_check_image() {
 	yuncore,fap655|\
 	motorola,q14|\
 	muxi,ap3220l|\
+	creatcomm,ipq5018-aforce-x1000|\
 	qcom,ipq6018-cp01|\
 	qcom,ipq807x-hk01|\
 	qcom,ipq807x-hk14|\
@@ -170,6 +171,7 @@ platform_do_upgrade() {
 
 	board=$(board_name)
 	case $board in
+	creatcomm,ipq5018-aforce-x1000|\
 	cig,wf188)
 		qca_do_upgrade $1
 		;;

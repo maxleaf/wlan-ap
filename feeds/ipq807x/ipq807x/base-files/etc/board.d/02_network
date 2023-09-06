@@ -40,6 +40,7 @@ qcom_setup_interfaces()
 	qcom,ipq5018-mp03.3|\
 	yuncore,ax840|\
 	motorola,q14|\
+	creatcomm,ipq5018-aforce-x1000|\
 	sercomm,wallaby|\
 	plasmacloud,pax1800-v1|\
 	plasmacloud,pax1800-v2)

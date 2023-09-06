@@ -182,3 +182,13 @@ define Device/xunison_d50
   IMAGE/nand-factory.ubi := append-ubi | qsdk-ipq-factory-nand
 endef
 TARGET_DEVICES += xunison_d50
+
+define Device/creatcomm_aforce-x1000
+  DEVICE_TITLE := Creatcomm Aforce X1000
+  DEVICE_DTS := qcom-ipq5018-aforce-x1000
+  SUPPORTED_DEVICES := creatcomm,ipq5018-aforce-x1000
+  DEVICE_PACKAGES := ath11k-wifi-qcom-ipq5018 ath11k-firmware-ipq50xx ath11k-firmware-qcn9000
+  DEVICE_DTS_CONFIG := config@aforce-x1000
+endef
+TARGET_DEVICES += creatcomm_aforce-x1000
+
